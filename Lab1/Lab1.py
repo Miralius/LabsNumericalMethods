@@ -31,4 +31,26 @@ def plot_function(func, a, b):
     matplotlib.pyplot.show()
 
 
+def find_solve(func, a, b, eps):
+    root = 0
+    count = 0
+    while True:
+        count += 1
+        f_a = func.subs(x, a)
+        c = 0.5 * (a + b)
+        if (b - a) < 2 * eps:
+            root = c
+            break
+        f_c = func.subs(x, c)
+        if f_c == 0:
+            root = c
+            break
+        if f_a * f_c < 0:
+            b = c
+        else:
+            a = c
+            f_a = f_c
+    print(root)
+
+
 plot_function(x ** 3 + 8.5 * x ** 2 + 21.8 * x + S(15.6), -10, 10)
