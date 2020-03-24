@@ -3,6 +3,7 @@ import matplotlib.ticker
 import numpy
 from sympy import symbols
 from sympy import S
+from sympy import solveset
 
 x = symbols('x')
 
@@ -24,16 +25,23 @@ def plot_function(func, a, b):
     xy.grid(which='major', color='k')
     xy.minorticks_on()
     xy.grid(which="minor", color='gray', linestyle=':')
-    xy.plot(x_num, func_numpy, color="black", label="y(x)")
+    xy.plot(x_num, func_numpy, color="black", label="f(x)")
     xy.set_xlabel("x")
     xy.set_ylabel("y")
     xy.legend()
     matplotlib.pyplot.show()
 
 
-def find_solve(func, a, b, eps):
+def find_solve_with_secant_method(func, a, b, eps):
     root = 0
     count = 0
+    exact_solution = 0
+    i = 0
+    solutions = solveset(func)
+    while i < len(solutions):
+        if a < solutions.args[i] < b:
+            exact_solution = solutions.args[i]
+        i += 1
     while True:
         count += 1
         f_a = func.subs(x, a)
@@ -50,7 +58,16 @@ def find_solve(func, a, b, eps):
         else:
             a = c
             f_a = f_c
-    print(root)
+    print("Найденный корень x* = " + str(root))
+    print("Невязка f(x*) = " + str(func.subs(x, root)))
+    print("Кол-во итераций = " + str(count))
+    print("Абсолютная погрешность = " + str(abs(root - exact_solution)))
+    print("Относительная погрешность = " + str(abs(root - exact_solution) / abs(root) * 100) + "%")
 
 
 plot_function(x ** 3 + 8.5 * x ** 2 + 21.8 * x + S(15.6), -10, 10)
+plot_function(x ** 3 + 8.5 * x ** 2 + 21.8 * x + S(15.6), -8, 0)
+plot_function(x ** 3 + 8.5 * x ** 2 + 21.8 * x + S(15.6), -4.8, 0)
+find_solve_with_secant_method(x ** 3 + 8.5 * x ** 2 + 21.8 * x + S(15.6), -4.8, -3.84, 10**(-3))
+find_solve_with_secant_method(x ** 3 + 8.5 * x ** 2 + 21.8 * x + S(15.6), -3.84, -2.88, 10**(-3))
+find_solve_with_secant_method(x ** 3 + 8.5 * x ** 2 + 21.8 * x + S(15.6), -1.92, -0.96, 10**(-3))
