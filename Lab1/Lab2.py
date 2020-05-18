@@ -37,16 +37,38 @@ def find_solve_system_with_newton_method(f1, f2, x0, y0, eps):
     count = 0
     x_k = x0
     y_k = y0
-    x_k1 = (x_k - diff(f2, y).subs(x, x_k).subs(y, y_k) * f1.subs(x, x_k).subs(y, y_k) + diff(f1, y).subs(x, x_k).subs(y, y_k) * f2.subs(x, x_k).subs(y, y_k)).n(16)
-    y_k1 = (y_k - diff(f2, x).subs(x, x_k).subs(y, y_k) * f1.subs(x, x_k).subs(y, y_k) + diff(f1, x).subs(x, x_k).subs(y, y_k) * f2.subs(x, x_k).subs(y, y_k)).n(16)
+    x_k1 = (x_k - (
+                diff(f2, y).subs(x, x_k).subs(y, y_k) * f1.subs(x, x_k).subs(y, y_k) - diff(f1, y).subs(x, x_k).subs(y,
+                                                                                                                     y_k) * f2.subs(
+            x, x_k).subs(y, y_k)) / (
+                        f1.subs(x, x_k).subs(y, y_k) * diff(f2, y).subs(x, x_k).subs(y, y_k) - diff(f1, y).subs(x,
+                                                                                                                x_k).subs(
+                    y, y_k) * f2.subs(x, x_k).subs(y, y_k))).n(16)
+    y_k1 = (y_k - (
+                diff(f1, x).subs(x, x_k).subs(y, y_k) * f2.subs(x, x_k).subs(y, y_k) - diff(f2, x).subs(x, x_k).subs(y,
+                                                                                                                     y_k) * f1.subs(
+            x, x_k).subs(y, y_k)) / (
+                        f1.subs(x, x_k).subs(y, y_k) * diff(f2, y).subs(x, x_k).subs(y, y_k) - diff(f1, y).subs(x,
+                                                                                                                x_k).subs(
+                    y, y_k) * f2.subs(x, x_k).subs(y, y_k))).n(16)
     while sqrt((x_k1 - x_k) ** 2 + (y_k1 - y_k) ** 2) > eps:
         count += 1
         x_k_1 = x_k
         y_k_1 = y_k
         x_k = x_k1
         y_k = y_k1
-        x_k1 = (x_k - diff(f2, y).subs(x, x_k).subs(y, y_k) * f1.subs(x, x_k).subs(y, y_k) + diff(f1, y).subs(x,x_k).subs(y, y_k) * f2.subs(x, x_k).subs(y, y_k)).n(16)
-        y_k1 = (y_k - diff(f2, x).subs(x, x_k).subs(y, y_k) * f1.subs(x, x_k).subs(y, y_k) + diff(f1, x).subs(x, x_k).subs(y, y_k) * f2.subs(x, x_k).subs(y, y_k)).n(16)
+        x_k1 = (x_k - (diff(f2, y).subs(x, x_k).subs(y, y_k) * f1.subs(x, x_k).subs(y, y_k) - diff(f1, y).subs(x,
+                                                                                                               x_k).subs(
+            y, y_k) * f2.subs(x, x_k).subs(y, y_k)) / (
+                            f1.subs(x, x_k).subs(y, y_k) * diff(f2, y).subs(x, x_k).subs(y, y_k) - diff(f1, y).subs(x,
+                                                                                                                    x_k).subs(
+                        y, y_k) * f2.subs(x, x_k).subs(y, y_k))).n(16)
+        y_k1 = (y_k - (diff(f1, x).subs(x, x_k).subs(y, y_k) * f2.subs(x, x_k).subs(y, y_k) - diff(f2, x).subs(x,
+                                                                                                               x_k).subs(
+            y, y_k) * f1.subs(x, x_k).subs(y, y_k)) / (
+                            f1.subs(x, x_k).subs(y, y_k) * diff(f2, y).subs(x, x_k).subs(y, y_k) - diff(f1, y).subs(x,
+                                                                                                                    x_k).subs(
+                        y, y_k) * f2.subs(x, x_k).subs(y, y_k))).n(16)
         if sqrt((x_k1 - x_k) ** 2 + (y_k1 - y_k) ** 2) > sqrt((x_k - x_k_1) ** 2 + (y_k - y_k_1) ** 2):
             print("Метод расходится! :(")
             break
@@ -56,8 +78,9 @@ def find_solve_system_with_newton_method(f1, f2, x0, y0, eps):
     print("Количество итераций = " + str(count))
     print("f1(x*) = " + str(f1.subs(x, x_k1).subs(y, y_k1)))
     print("f2(x*) = " + str(f2.subs(x, x_k1).subs(y, y_k1)))
-    print("Погрешность вычислений для f1 = " + str(f1.subs(x, x_k1 - x_k).subs(y, y_k1 - y_k)))
-    print("Погрешность вычислений для f2 = " + str(f2.subs(x, x_k1 - x_k).subs(y, y_k1 - y_k)))
+    print("Погрешность вычислений для f1 = " + str(f1.subs(x, x_k1).subs(y, y_k1) - f1.subs(x, x_k).subs(y, y_k)))
+    print("Погрешность вычислений для f2 = " + str(f2.subs(x, x_k1).subs(y, y_k1) - f2.subs(x, x_k).subs(y, y_k)))
+
 
 def find_solve_system_with_modified_newton_method(f1, f2, x0, y0, eps):
     count = 0
@@ -67,16 +90,20 @@ def find_solve_system_with_modified_newton_method(f1, f2, x0, y0, eps):
     df1_dy = (diff(f1, y).subs(x, x_k).subs(y, y_k)).n(16)
     df2_dx = (diff(f2, x).subs(x, x_k).subs(y, y_k)).n(16)
     df2_dy = (diff(f2, y).subs(x, x_k).subs(y, y_k)).n(16)
-    x_k1 = (x_k - df2_dy * f1.subs(x, x_k).subs(y, y_k) + df1_dy * f2.subs(x, x_k).subs(y, y_k)).n(16)
-    y_k1 = (y_k - df2_dx * f1.subs(x, x_k).subs(y, y_k) + df1_dx * f2.subs(x, x_k).subs(y, y_k)).n(16)
+    x_k1 = (x_k - (df2_dy * f1.subs(x, x_k).subs(y, y_k) - df1_dy * f2.subs(x, x_k).subs(y, y_k)) / (
+                df1_dx * df2_dy - df1_dy * df2_dx)).n(16)
+    y_k1 = (y_k - (df1_dx * f2.subs(x, x_k).subs(y, y_k) - df2_dx * f1.subs(x, x_k).subs(y, y_k)) / (
+                df1_dx * df2_dy - df1_dy * df2_dx)).n(16)
     while sqrt((x_k1 - x_k) ** 2 + (y_k1 - y_k) ** 2) > eps:
         count += 1
         x_k_1 = x_k
         y_k_1 = y_k
         x_k = x_k1
         y_k = y_k1
-        x_k1 = (x_k - df2_dy * f1.subs(x, x_k).subs(y, y_k) + df1_dy * f2.subs(x, x_k).subs(y, y_k)).n(16)
-        y_k1 = (y_k - df2_dx * f1.subs(x, x_k).subs(y, y_k) + df1_dx * f2.subs(x, x_k).subs(y, y_k)).n(16)
+        x_k1 = (x_k - (df2_dy * f1.subs(x, x_k).subs(y, y_k) - df1_dy * f2.subs(x, x_k).subs(y, y_k)) / (
+                    df1_dx * df2_dy - df1_dy * df2_dx)).n(16)
+        y_k1 = (y_k - (df1_dx * f2.subs(x, x_k).subs(y, y_k) - df2_dx * f1.subs(x, x_k).subs(y, y_k)) / (
+                    df1_dx * df2_dy - df1_dy * df2_dx)).n(16)
         if sqrt((x_k1 - x_k) ** 2 + (y_k1 - y_k) ** 2) > sqrt((x_k - x_k_1) ** 2 + (y_k - y_k_1) ** 2):
             print("Метод расходится! :(")
             break
@@ -86,10 +113,19 @@ def find_solve_system_with_modified_newton_method(f1, f2, x0, y0, eps):
     print("Количество итераций = " + str(count))
     print("f1(x*) = " + str(f1.subs(x, x_k1).subs(y, y_k1)))
     print("f2(x*) = " + str(f2.subs(x, x_k1).subs(y, y_k1)))
-    print("Погрешность вычислений для f1 = " + str(f1.subs(x, x_k1 - x_k).subs(y, y_k1 - y_k)))
-    print("Погрешность вычислений для f2 = " + str(f2.subs(x, x_k1 - x_k).subs(y, y_k1 - y_k)))
+    print("Погрешность вычислений для f1 = " + str(f1.subs(x, x_k1).subs(y, y_k1) - f1.subs(x, x_k).subs(y, y_k)))
+    print("Погрешность вычислений для f2 = " + str(f2.subs(x, x_k1).subs(y, y_k1) - f2.subs(x, x_k).subs(y, y_k)))
 
-plot_functions(Eq(cos(x + 0.5) - y, 2), Eq(sin(y) - 2 * x, 1), -10, 10)
-plot_functions(Eq(cos(x + 0.5) - y, 2), Eq(sin(y) - 2 * x, 1), -4, 0)
-find_solve_system_with_newton_method(cos(x + 0.5) - y - S(2), sin(y) - 2 * x - S(1), -1, -1, 10 ** (-3))
-find_solve_system_with_modified_newton_method(cos(x + 0.5) - y - S(2), sin(y) - 2 * x - S(1), -1, -1, 10 ** (-3))
+
+if __name__ == "__main__":
+    plot_functions(Eq(cos(x + 0.5) - y, 2), Eq(sin(y) - 2 * x, 1), -4, 0)
+    while True:
+        print("Введите начальное приближение: ")
+        init_x = float(input("x: "))
+        init_y = float(input("y: "))
+        find_solve_system_with_newton_method(cos(x + 0.5) - y - S(2), sin(y) - 2 * x - S(1), init_x, init_y, 10 ** (-3))
+        find_solve_system_with_modified_newton_method(cos(x + 0.5) - y - S(2), sin(y) - 2 * x - S(1), init_x, init_y,
+                                                      10 ** (-3))
+        progress = int(input("Для продолжения нажмите введите 1, для завершения  0: "))
+        if progress == 0:
+            break
