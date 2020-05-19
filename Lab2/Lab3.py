@@ -43,7 +43,7 @@ def plot_function(x, func, name):
     xy.grid(which='major', color='k')
     xy.minorticks_on()
     xy.grid(which="minor", color='gray', linestyle=':')
-    xy.plot(x, func, color="blue", label=name)
+    xy.plot(x, func, color="deeppink", label=name)
     xy.set_xlabel("x")
     xy.set_ylabel("y")
     xy.legend()
@@ -56,7 +56,7 @@ def plot_functions(x, func1, func2, name1, name2):
     xy.minorticks_on()
     xy.grid(which="minor", color='gray', linestyle=':')
     xy.plot(x, func1, color="blue", label=name1)
-    xy.plot(x, func2, color="red", label=name2)
+    xy.plot(x, func2, color="deeppink", label=name2)
     xy.set_xlabel("x")
     xy.set_ylabel("y")
     xy.legend()
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     print("x = " + str(x))
     number_x = int(input("Выберите начало отрезка x для интерполяции полиномами Лагранжа: "))
     x_L = numpy.array([x[number_x + i] for i in range(4)])
-    y_interpolated_by_lagrange = numpy.array([interpolate_with_the_lagrange_polynomial(x_L[number_x + i], x_L) for i in range(len(x_L))])
+    y_interpolated_by_lagrange = numpy.array([interpolate_with_the_lagrange_polynomial(x_L[i], x_L) for i in range(len(x_L))])
     a = x_L[0]
     b = x_L[3]
     h = (x_L[3] - x_L[0]) / number
