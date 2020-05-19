@@ -69,6 +69,7 @@ print('Шаг: ' + str(h))
 k = b-3*h
 x = np.linspace(b-3*h, b, 100)
 pl.figure(2)
+lol = lagrange(x, otr)
 pl.title("Графики исходной функции и многочлена Лагранжа")
 pl.plot(x, f(x), linewidth=3, color='red')
 pl.plot(x, lagrange(x, otr), linewidth=1, color='blue')
