@@ -11,11 +11,11 @@ def function(point):
 
 
 def define_step(func):
-    return N(2 * ((eps / (abs(diff(func, xx, 4)).subs(xx, a))) ** (1 / 4)))
+    return float(N(2 * ((eps / (abs(diff(func, xx, 4)).subs(xx, a))) ** (1 / 4))))
 
 
 def discretize():
-    n = round((b - a) / h)
+    n = int(round((b - a) / h))
     return n, numpy.array([a + i * h for i in range(n)]), numpy.array([function(a + i * h) for i in range(n)])
 
 
@@ -43,6 +43,83 @@ def interpolate_with_the_newton_method(point):
     dy1_2 = dy2 - dy1
     dy0_3 = dy1_2 - dy0_2
     return y_interpolated_by_lagrange[0] + dy0 * t + dy0_2 * t * (t - 1) / 2 + dy0_3 * t * (t - 1) * (t - 2) / 6
+
+
+def interpolate_linear_spline(point, y_n):
+    matrix = numpy.array([[1, 0, 0, 0, 0, 0],
+                          [1, h, 0, 0, 0, 0],
+                          [0, 0, 1, 0, 0, 0],
+                          [0, 0, 1, h, 0, 0],
+                          [0, 0, 0, 0, 1, 0],
+                          [0, 0, 0, 0, 1, h]])
+    vector = numpy.array([y_n[0],
+                          y_n[1],
+                          y_n[1],
+                          y_n[2],
+                          y_n[2],
+                          y_n[3]])
+    return evaluate_spline(point, numpy.linalg.solve(matrix, vector), 1)
+
+
+def interpolate_parabolic_spline(point, y_n):
+    matrix = numpy.array([[1, 0, 0, 0, 0, 0, 0, 0, 0],
+                          [1, h, h * h, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 1, h, h * h, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 1, h, h * h],
+                          [1, h, h * h, -1, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 1, h, h * h, -1, 0, 0],
+                          [0, 1, 2 * h, 0, -1, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 1, 2 * h, 0, -1, 0],
+                          [0, 0, 1, 0, 0, 0, 0, 0, 0]])
+    vector = numpy.array([y_n[0],
+                          y_n[1],
+                          y_n[2],
+                          y_n[3],
+                          0,
+                          0,
+                          0,
+                          0,
+                          0])
+    return evaluate_spline(point, numpy.linalg.solve(matrix, vector), 2)
+
+
+def interpolate_cubic_spline(point, y_n):
+    matrix = numpy.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                          [1, h, h * h, h * h * h, 0, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 1, h, h * h, h * h * h, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0, 1, h, h * h, h * h * h],
+                          [0, 1, 2 * h, 3 * h * h, 0, -1, 0, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 1, 2 * h, 3 * h * h, 0, -1, 0, 0],
+                          [0, 0, 2, 6 * h, 0, 0, -2, 0, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 2, 6 * h, 0, 0, -2, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6 * h],
+                          [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
+    vector = numpy.array([y_n[0],
+                          y_n[1],
+                          y_n[1],
+                          y_n[2],
+                          y_n[2],
+                          y_n[3],
+                          0,
+                          0,
+                          0,
+                          0,
+                          0,
+                          0])
+    return evaluate_spline(point, numpy.linalg.solve(matrix, vector), 3)
+
+
+def evaluate_spline(point, coefficients, order):
+    value = 0
+    if x_L[0] < point < x_L[3]:
+        i = 0
+        while i < order:
+            n = 0 if point < x_L[1] else order + 1 if x_L[1] <= point < x_L[2] else 2 * (order + 1)
+            value += coefficients[n] * numpy.power(point - x_L[int(n / (order + 1))], n % (order + 1))
+            i += 1
+    return value
 
 
 def plot_function(points, func, name):
@@ -115,6 +192,7 @@ if __name__ == "__main__":
     a = 0
     b = 10
     h = define_step(pi * xx / (10 + xx / 2))
+    y_N = numpy.array([interpolate_with_the_newton_method(x_L[i]) for i in range(len(x_L))])
     y_interpolated_by_newton = numpy.array([interpolate_with_the_newton_method(x[i]) for i in range(len(x))])
     plot_three_functions(x, y, y_L, y_interpolated_by_newton, "f(x)", "Lagrange polynomial interpolation",
                          "Newton polynomial interpolation")
@@ -122,3 +200,10 @@ if __name__ == "__main__":
                   "absolute error f(x) & f_N(x)")
     plot_function(x, numpy.array([abs(y_interpolated_by_newton[i] - y_L[i]) for i in range(len(x))]),
                   "absolute error f_L(x) & f_N(x)")
+
+    print("Третье задание ---------")
+    y_interpolated_linear_spline = numpy.array([interpolate_linear_spline(x[i], y_N) for i in range(len(x))])
+    y_interpolated_parabolic_spline = numpy.array([interpolate_parabolic_spline(x[i], y_N) for i in range(len(x))])
+    y_interpolated_cubic_spline = numpy.array([interpolate_cubic_spline(x[i], y_N) for i in range(len(x))])
+    plot_three_functions(x, y_interpolated_linear_spline, y_interpolated_parabolic_spline, y_interpolated_cubic_spline,
+                         "linear spline", "parabolic spline", "cubic spline")
