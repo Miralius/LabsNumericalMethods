@@ -15,7 +15,7 @@ def define_step(func):
 
 
 def discretize():
-    n = int(round((b - a) / h))
+    n = int(numpy.ceil((b - a) / h))
     return n, numpy.array([a + i * h for i in range(n)]), numpy.array([function(a + i * h) for i in range(n)])
 
 
@@ -52,13 +52,14 @@ def interpolate_linear_spline(point, y_n):
                           [0, 0, 1, h, 0, 0],
                           [0, 0, 0, 0, 1, 0],
                           [0, 0, 0, 0, 1, h]])
-    vector = numpy.array([y_n[0],
-                          y_n[1],
-                          y_n[1],
-                          y_n[2],
-                          y_n[2],
-                          y_n[3]])
-    return evaluate_spline(point, numpy.linalg.solve(matrix, vector), 1)
+    vector = numpy.array([[y_n[0]],
+                          [y_n[1]],
+                          [y_n[1]],
+                          [y_n[2]],
+                          [y_n[2]],
+                          [y_n[3]]])
+    solved = numpy.linalg.solve(matrix, vector)
+    return evaluate_spline(point, solved.ravel(), 1)
 
 
 def interpolate_parabolic_spline(point, y_n):
@@ -71,16 +72,17 @@ def interpolate_parabolic_spline(point, y_n):
                           [0, 1, 2 * h, 0, -1, 0, 0, 0, 0],
                           [0, 0, 0, 0, 1, 2 * h, 0, -1, 0],
                           [0, 0, 1, 0, 0, 0, 0, 0, 0]])
-    vector = numpy.array([y_n[0],
-                          y_n[1],
-                          y_n[2],
-                          y_n[3],
-                          0,
-                          0,
-                          0,
-                          0,
-                          0])
-    return evaluate_spline(point, numpy.linalg.solve(matrix, vector), 2)
+    vector = numpy.array([[y_n[0]],
+                          [y_n[1]],
+                          [y_n[2]],
+                          [y_n[3]],
+                          [0],
+                          [0],
+                          [0],
+                          [0],
+                          [0]])
+    solved = numpy.linalg.solve(matrix, vector)
+    return evaluate_spline(point, solved.ravel(), 2)
 
 
 def interpolate_cubic_spline(point, y_n):
@@ -96,28 +98,38 @@ def interpolate_cubic_spline(point, y_n):
                           [0, 0, 0, 0, 0, 2, 6 * h, 0, 0, -2, 0, 0],
                           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6 * h],
                           [0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
-    vector = numpy.array([y_n[0],
-                          y_n[1],
-                          y_n[1],
-                          y_n[2],
-                          y_n[2],
-                          y_n[3],
-                          0,
-                          0,
-                          0,
-                          0,
-                          0,
-                          0])
-    return evaluate_spline(point, numpy.linalg.solve(matrix, vector), 3)
+    vector = numpy.array([[y_n[0]],
+                          [y_n[1]],
+                          [y_n[1]],
+                          [y_n[2]],
+                          [y_n[2]],
+                          [y_n[3]],
+                          [0],
+                          [0],
+                          [0],
+                          [0],
+                          [0],
+                          [0]])
+    solved = numpy.linalg.solve(matrix, vector)
+    return evaluate_spline(point, solved.ravel(), 3)
 
 
 def evaluate_spline(point, coefficients, order):
     value = 0
     if x_L[0] < point < x_L[3]:
         i = 0
-        while i < order:
-            n = 0 if point < x_L[1] else order + 1 if x_L[1] <= point < x_L[2] else 2 * (order + 1)
-            value += coefficients[n] * numpy.power(point - x_L[int(n / (order + 1))], n % (order + 1))
+        while i <= order:
+            if point < x_L[1]:
+                n = 0
+            elif x_L[1] <= point < x_L[2]:
+                n = order + 1
+            else:
+                n = 2 * (order + 1)
+            n += i
+            degree = n % (order + 1)
+            index = int(n / (order + 1))
+            base = point - x_L[index]
+            value += coefficients[n] * numpy.power(base, degree)
             i += 1
     return value
 
@@ -202,6 +214,10 @@ if __name__ == "__main__":
                   "absolute error f_L(x) & f_N(x)")
 
     print("Третье задание ---------")
+    a = x_L[0]
+    b = x_L[3]
+    h = (x_L[3] - x_L[0]) / 100
+    number, x, y = discretize()
     y_interpolated_linear_spline = numpy.array([interpolate_linear_spline(x[i], y_N) for i in range(len(x))])
     y_interpolated_parabolic_spline = numpy.array([interpolate_parabolic_spline(x[i], y_N) for i in range(len(x))])
     y_interpolated_cubic_spline = numpy.array([interpolate_cubic_spline(x[i], y_N) for i in range(len(x))])
