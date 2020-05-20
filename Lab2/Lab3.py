@@ -116,7 +116,7 @@ def interpolate_cubic_spline(point, y_n):
 
 def evaluate_spline(point, coefficients, order):
     value = 0
-    if x_L[0] <= point < x_L[3]:
+    if x_L[0] <= point <= x_L[3]:
         i = 0
         while i <= order:
             n = 0 if point < x_L[1] else order + 1 if x_L[1] <= point < x_L[2] else 2 * (order + 1)
