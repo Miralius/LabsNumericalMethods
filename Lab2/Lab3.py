@@ -15,7 +15,7 @@ def define_step(func):
 
 
 def discretize():
-    n = int(numpy.ceil((b - a) / h))
+    n = int(round((b - a) / h))
     return n, numpy.array([a + i * h for i in range(n)]), numpy.array([function(a + i * h) for i in range(n)])
 
 
@@ -116,20 +116,12 @@ def interpolate_cubic_spline(point, y_n):
 
 def evaluate_spline(point, coefficients, order):
     value = 0
-    if x_L[0] < point < x_L[3]:
+    if x_L[0] <= point < x_L[3]:
         i = 0
         while i <= order:
-            if point < x_L[1]:
-                n = 0
-            elif x_L[1] <= point < x_L[2]:
-                n = order + 1
-            else:
-                n = 2 * (order + 1)
+            n = 0 if point < x_L[1] else order + 1 if x_L[1] <= point < x_L[2] else 2 * (order + 1)
             n += i
-            degree = n % (order + 1)
-            index = int(n / (order + 1))
-            base = point - x_L[index]
-            value += coefficients[n] * numpy.power(base, degree)
+            value += coefficients[n] * numpy.power(point - x_L[int(n / (order + 1))], n % (order + 1))
             i += 1
     return value
 
@@ -218,6 +210,9 @@ if __name__ == "__main__":
     b = x_L[3]
     h = (x_L[3] - x_L[0]) / 100
     number, x, y = discretize()
+    a = 0
+    b = 10
+    h = define_step(pi * xx / (10 + xx / 2))
     y_interpolated_linear_spline = numpy.array([interpolate_linear_spline(x[i], y_N) for i in range(len(x))])
     y_interpolated_parabolic_spline = numpy.array([interpolate_parabolic_spline(x[i], y_N) for i in range(len(x))])
     y_interpolated_cubic_spline = numpy.array([interpolate_cubic_spline(x[i], y_N) for i in range(len(x))])
