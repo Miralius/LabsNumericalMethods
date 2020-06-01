@@ -2,6 +2,8 @@
   <dictionary name="F-Mir">
     <words>
       <w>discretize</w>
+      <w>kutta</w>
+      <w>runge</w>
     </words>
   </dictionary>
 </component>

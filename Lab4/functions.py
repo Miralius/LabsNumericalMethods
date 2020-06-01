@@ -55,3 +55,19 @@ def define_step(h, a, b, y0, x0):
     print("Двойной шаг, y2_ = " + str(y2_))
     print("Погрешность y2 - y2_ = " + str(dyy2))
     return h0
+
+
+def discretize(a, b, h):
+    return numpy.array([a + i * h for i in range(int(round((b - a) / h)) + 1)])
+
+
+# noinspection SpellCheckingInspection
+def runge_kutta_dsolve(x, y0, a, b, h):
+    n = numpy.ceil((b - a) / h) + 1
+    y = numpy.zeros(int(n))
+    y[0] = y0
+    i = 1
+    while i < n:
+        y[i] = y[i - 1] + delta(x[0] + (i - 1) * h, y[i - 1], h)
+        i += 1
+    return y
