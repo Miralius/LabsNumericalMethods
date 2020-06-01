@@ -31,12 +31,22 @@ def define_step(a, b, eps):
     return h
 
 
-def trapezes(a, b, h):
+def trapezes_integrate(a, b, h):
     n = numpy.round((b - a) / h)
-    value = (function(a) + function(a + n * h)) / 2
+    integral = (function(a) + function(a + n * h)) / 2
     i = 1
     while i < n:
-        value += function(a + i * h)
+        integral += function(a + i * h)
         i += 1
-    value *= h
-    return value
+    return integral * h
+
+
+def simpson_integrate(a, b, h):
+    n = numpy.round((b - a) / h)
+    integral = function(a) + function(a + n * h)
+    i = 1
+    while i < n:
+        integral += 2 * function(a + i * h) + 4 * function(a + (i - 1/2) * h)
+        i += 1
+    integral -= 2 * function(a + (n - 1) * h)
+    return integral * (h / 6)

@@ -9,5 +9,11 @@ if __name__ == "__main__":
     print("Исходная функция: f(x)=exp(-sqrt(x))")
     print("Границы интегрирования a и b: " + str(a) + " и " + str(b))
     print("1) Шаг интегрирования h: " + str(h))
-    print("2) Значение интеграла по формуле трапеций c шагом 2h: " + str(trapezes(a, b, 2 * h)))
-    print("2) Значение интеграла по формуле трапеций c шагом h: " + str(trapezes(a, b, h)))
+    print("2) Значение интеграла по формуле трапеций c шагом 2h: " + str(trapezes_integrate(a, b, 2 * h)))
+    print("Значение интеграла по формуле трапеций c шагом h: " + str(trapezes_integrate(a, b, h)))
+    print("Уточненная погрешность при вычислении по формуле трапеций: " + str(abs(trapezes_integrate(a, b, 2 * h) -
+                                                                                  trapezes_integrate(a, b, h)) / 3))
+    print("3) Значение интеграла по формуле Симпсона c шагом 2h: " + str(simpson_integrate(a, b, 2 * h)))
+    print("Значение интеграла по формуле Симпсона c шагом h: " + str(simpson_integrate(a, b, h)))
+    print("Уточненная погрешность при вычислении по формуле трапеций: " + str(abs(simpson_integrate(a, b, 2 * h) -
+                                                                                  simpson_integrate(a, b, h)) / 15))
