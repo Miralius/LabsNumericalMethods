@@ -1,7 +1,6 @@
 import matplotlib.pyplot
 import matplotlib.ticker
 import numpy
-from sympy import symbols
 
 
 def exact_solution(x):
@@ -9,11 +8,6 @@ def exact_solution(x):
 
 
 def function(x, y):
-    return y * (0.5 * x * y - 1)
-
-
-def func():
-    x, y = symbols('x y')
     return y * (0.5 * x * y - 1)
 
 
