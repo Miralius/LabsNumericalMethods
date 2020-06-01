@@ -31,11 +31,12 @@ def define_step(a, b, eps):
     return h
 
 
-#def trapezoidal(a, b, h):
-#    n = (b-a) / h
-#    n += 4 - n % 4
-#    value = 0
-#    for   i = 0:n-1
-#        value = value + (subs(f, a + i*h) + subs(f, a + (i+1)*h))*h/2
-#    value = eval(value)
-#    return value
+def trapezes(a, b, h):
+    n = numpy.round((b - a) / h)
+    value = (function(a) + function(a + n * h)) / 2
+    i = 1
+    while i < n:
+        value += function(a + i * h)
+        i += 1
+    value *= h
+    return value
