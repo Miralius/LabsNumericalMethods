@@ -2,6 +2,14 @@ import numpy
 from sympy import symbols, exp, sqrt, diff, N, solve, integrate
 
 
+def function(x):
+    return numpy.exp(-numpy.sqrt(x))
+
+
+def function_symbolic():
+    return exp(-sqrt(symbols('x')))
+
+
 # noinspection SpellCheckingInspection
 def m_n_plus_one(n, a, b, func):
     x = symbols('x')
@@ -14,13 +22,8 @@ def m_n_plus_one(n, a, b, func):
     return float(maximum)
 
 
-def function(x):
-    return numpy.exp(-numpy.sqrt(x))
-
-
 def define_step(a, b, eps):
-    x = symbols('x')
-    h = numpy.sqrt(12 * eps / (m_n_plus_one(1, a, b, exp(-sqrt(x))) * (b - a)))
+    h = numpy.sqrt(12 * eps / (m_n_plus_one(1, a, b, function_symbolic()) * (b - a)))
     n = numpy.ceil((b - a) / h)
     n_remainder = n % 4
     if n_remainder != 0:
@@ -29,7 +32,7 @@ def define_step(a, b, eps):
 
 
 def trapezes_integrate(a, b, h):
-    n = numpy.round((b - a) / h)
+    n = numpy.ceil((b - a) / h)
     integral = 0
     i = 1
     while i <= n:
@@ -39,7 +42,7 @@ def trapezes_integrate(a, b, h):
 
 
 def simpson_integrate(a, b, h):
-    n = numpy.round((b - a) / h)
+    n = numpy.ceil((b - a) / h)
     integral = 0
     i = 1
     while i <= n:
@@ -49,5 +52,4 @@ def simpson_integrate(a, b, h):
 
 
 def newton_leibniz_integrate(a, b):
-    x = symbols('x')
-    return integrate(exp(-sqrt(x)), (x, a, b))
+    return integrate(function_symbolic(), (symbols('x'), a, b))
