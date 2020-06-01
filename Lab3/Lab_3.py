@@ -19,5 +19,13 @@ if __name__ == "__main__":
                                                                                   simpson_integrate(a, b, h)) / 15))
     print("4) Точное значение интеграла, посчитанного по формуле Ньютона-Лейбница: " +
           str(newton_leibniz_integrate(a, b)))
-    print("4) Точное значение интеграла, посчитанного по формуле Ньютона-Лейбница (десятичной дробью): " +
+    print("Точное значение интеграла, посчитанного по формуле Ньютона-Лейбница (десятичной дробью): " +
           str(N(newton_leibniz_integrate(a, b))))
+    print("Сравнение точного значения со значением, посчитанным методом трапеций, шаг 2h: " +
+          str(abs(N(newton_leibniz_integrate(a, b) - trapezes_integrate(a, b, 2 * h)))))
+    print("Сравнение точного значения со значением, посчитанным методом трапеций, шаг h: " +
+          str(abs(N(newton_leibniz_integrate(a, b) - trapezes_integrate(a, b, h)))))
+    print("Сравнение точного значения со значением, посчитанным методом Симпсона, шаг 2h: " +
+          str(abs(N(newton_leibniz_integrate(a, b) - simpson_integrate(a, b, 2 * h)))))
+    print("Сравнение точного значения со значением, посчитанным методом Симпсона, шаг 2h (самый точный результат!): " +
+          str(abs(N(newton_leibniz_integrate(a, b) - simpson_integrate(a, b, h)))))
