@@ -5,3 +5,7 @@ if __name__ == "__main__":
     h = 0.1
     a = 0
     b = 2
+    y0 = 2
+    x0 = 0
+    h = define_step(h, a, b, y0, x0)
+    print("Оптимальный шаг h = " + str(h))
