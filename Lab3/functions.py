@@ -20,13 +20,12 @@ def function(x):
 
 def define_step(a, b, eps):
     x = symbols('x')
-    h = float(numpy.sqrt(12 * eps / (m_n_plus_one(1, a, b, exp(-sqrt(x))) * (b - a))))
+    h = numpy.sqrt(12 * eps / (m_n_plus_one(1, a, b, exp(-sqrt(x))) * (b - a)))
     n = numpy.ceil((b - a) / h)
     n_remainder = n % 4
     if n_remainder != 0:
         n += 4 - n_remainder
-    h = (b - a) / n
-    return h
+    return (b - a) / n
 
 
 def trapezes_integrate(a, b, h):

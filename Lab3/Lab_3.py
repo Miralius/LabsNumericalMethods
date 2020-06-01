@@ -8,6 +8,7 @@ if __name__ == "__main__":
     h = define_step(a, b, eps)
     print("Исходная функция: f(x)=exp(-sqrt(x))")
     print("Границы интегрирования a и b: " + str(a) + " и " + str(b))
+    print("Заданная точность вычислений: " + str(eps))
     print("1) Шаг интегрирования h: " + str(h))
     print("2) Значение интеграла по формуле трапеций c шагом 2h: " + str(trapezes_integrate(a, b, 2 * h)))
     print("Значение интеграла по формуле трапеций c шагом h: " + str(trapezes_integrate(a, b, h)))
@@ -27,5 +28,5 @@ if __name__ == "__main__":
           str(abs(N(newton_leibniz_integrate(a, b) - trapezes_integrate(a, b, h)))))
     print("Сравнение точного значения со значением, посчитанным методом Симпсона, шаг 2h: " +
           str(abs(N(newton_leibniz_integrate(a, b) - simpson_integrate(a, b, 2 * h)))))
-    print("Сравнение точного значения со значением, посчитанным методом Симпсона, шаг 2h (самый точный результат!): " +
+    print("Сравнение точного значения со значением, посчитанным методом Симпсона, шаг h (самый точный результат!): " +
           str(abs(N(newton_leibniz_integrate(a, b) - simpson_integrate(a, b, h)))))
