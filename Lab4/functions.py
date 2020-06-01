@@ -4,6 +4,10 @@ import numpy
 from sympy import symbols
 
 
+def exact_solution(x):
+    return 2 / (1 + x)
+
+
 def function(x, y):
     return y * (0.5 * x * y - 1)
 

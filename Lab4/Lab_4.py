@@ -26,3 +26,12 @@ if __name__ == "__main__":
     print("y с двойным шагом: " + str(y_eiler_2h))
     plot(x, numpy.array([y_runge_kutta_h, y_eiler_h]),
          numpy.array(["Интегральная кривая, метод Рунге-Кутта (IV)", "Интегральная кривая, метод Эйлера"]))
+    print("Найдём точное решение задачи Коши:")
+    y = numpy.array([exact_solution(x[i]) for i in range(len(x))])
+    print("y: " + str(y))
+    plot(x, numpy.array([y, y_runge_kutta_h, y_eiler_h]), numpy.array(
+        ["Точное решение", "Интегральная кривая, метод Рунге-Кутта (IV)", "Интегральная кривая, метод Эйлера"]))
+    plot(x, numpy.array([y, y_runge_kutta_h, y_eiler_h]), numpy.array(
+        ["Точное решение", "Интегральная кривая, метод Рунге-Кутта (IV)", "Интегральная кривая, метод Эйлера"]),
+         numpy.array([1.995, 2, 0.666, 0.668]))
+
