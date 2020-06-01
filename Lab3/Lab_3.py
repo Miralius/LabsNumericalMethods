@@ -17,3 +17,7 @@ if __name__ == "__main__":
     print("Значение интеграла по формуле Симпсона c шагом h: " + str(simpson_integrate(a, b, h)))
     print("Уточненная погрешность при вычислении по формуле трапеций: " + str(abs(simpson_integrate(a, b, 2 * h) -
                                                                                   simpson_integrate(a, b, h)) / 15))
+    print("4) Точное значение интеграла, посчитанного по формуле Ньютона-Лейбница: " +
+          str(newton_leibniz_integrate(a, b)))
+    print("4) Точное значение интеграла, посчитанного по формуле Ньютона-Лейбница (десятичной дробью): " +
+          str(N(newton_leibniz_integrate(a, b))))
