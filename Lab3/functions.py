@@ -22,4 +22,20 @@ def function(x):
 
 def define_step(a, b, eps):
     x = symbols('x')
-    return float(numpy.sqrt(12 * eps / (m_n_plus_one(1, a, b, exp(-sqrt(x))) * (b - a))))
+    h = float(numpy.sqrt(12 * eps / (m_n_plus_one(1, a, b, exp(-sqrt(x))) * (b - a))))
+    n = numpy.ceil((b - a) / h)
+    n_remainder = (n - 1) % 4
+    if n_remainder != 0:
+        n += 4 - n_remainder
+    h = (b - a) / n
+    return h
+
+
+#def trapezoidal(a, b, h):
+#    n = (b-a) / h
+#    n += 4 - n % 4
+#    value = 0
+#    for   i = 0:n-1
+#        value = value + (subs(f, a + i*h) + subs(f, a + (i+1)*h))*h/2
+#    value = eval(value)
+#    return value
