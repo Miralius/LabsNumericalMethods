@@ -2,6 +2,7 @@
   <dictionary name="F-Mir">
     <words>
       <w>discretize</w>
+      <w>eiler</w>
       <w>kutta</w>
       <w>runge</w>
     </words>

@@ -1,3 +1,5 @@
+import matplotlib.pyplot
+import matplotlib.ticker
 import numpy
 from sympy import symbols
 
@@ -71,3 +73,32 @@ def runge_kutta_dsolve(x, y0, a, b, h):
         y[i] = y[i - 1] + delta(x[0] + (i - 1) * h, y[i - 1], h)
         i += 1
     return y
+
+
+# noinspection SpellCheckingInspection
+def eiler_dsolve(x, y0, a, b, h):
+    n = numpy.ceil((b - a) / h) + 1
+    y = numpy.zeros(int(n))
+    y[0] = y0
+    i = 1
+    while i < n:
+        y[i] = y[i - 1] + h * function(x[0] + (i - 1) * h, y[i - 1])
+        i += 1
+    return y
+
+
+def plot(x, functions, names, axis_values=None):
+    xy = matplotlib.pyplot.subplot()
+    xy.grid(which='major', color='k')
+    xy.minorticks_on()
+    xy.grid(which="minor", color='gray', linestyle=':')
+    i = 0
+    while i < len(functions):
+        xy.plot(x, functions[i], label=names[i])
+        i += 1
+    xy.set_xlabel("x")
+    xy.set_ylabel("y")
+    if axis_values is not None:
+        matplotlib.pyplot.axis(axis_values)
+    xy.legend()
+    matplotlib.pyplot.show()
