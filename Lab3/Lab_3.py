@@ -16,7 +16,7 @@ if __name__ == "__main__":
                                                                                   trapezes_integrate(a, b, h)) / 3))
     print("3) Значение интеграла по формуле Симпсона c шагом 2h: " + str(simpson_integrate(a, b, 2 * h)))
     print("Значение интеграла по формуле Симпсона c шагом h: " + str(simpson_integrate(a, b, h)))
-    print("Уточненная погрешность при вычислении по формуле трапеций: " + str(abs(simpson_integrate(a, b, 2 * h) -
+    print("Уточненная погрешность при вычислении по формуле Симпсона: " + str(abs(simpson_integrate(a, b, 2 * h) -
                                                                                   simpson_integrate(a, b, h)) / 15))
     print("4) Точное значение интеграла, посчитанного по формуле Ньютона-Лейбница: " +
           str(newton_leibniz_integrate(a, b)))
