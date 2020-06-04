@@ -37,7 +37,7 @@ if __name__ == "__main__":
     plot(x, numpy.array([numpy.array([abs(y_int_N[i] - y_int_L[i]) for i in range(len(x))])]),
          numpy.array(["absolute error y_L(x) & y_N(x)"]))
 
-    y_interpolated_linear_spline = numpy.array([interpolate_linear_spline(x[i], x_L, y_N, h) for i in range(len(x))])
+    y_interpolated_linear_spline = numpy.array([interpolate_linear_spline(x[i], x_L, y_N) for i in range(len(x))])
     y_interpolated_parabolic_spline = numpy.array(
         [interpolate_parabolic_spline(x[i], x_L, y_N, h) for i in range(len(x))])
     y_interpolated_cubic_spline = numpy.array([interpolate_cubic_spline(x[i], x_L, y_N, h) for i in range(len(x))])

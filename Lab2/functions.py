@@ -1,7 +1,7 @@
 import matplotlib.pyplot
 import matplotlib.ticker
 import numpy
-from sympy import symbols, pi, diff, N
+from sympy import symbols, pi, diff, N, solve, Eq
 
 
 def function(x):
@@ -46,21 +46,22 @@ def interpolate_with_newton_method(x, x_int, y_int_l, h):
     return y_int_l[0] + dy0 * t + dy0_2 * t * (t - 1) / 2 + dy0_3 * t * (t - 1) * (t - 2) / 6
 
 
-def interpolate_linear_spline(x, x_int_l, y_int_n, h):
-    matrix = numpy.array([[1, 0, 0, 0, 0, 0],
-                          [1, h, 0, 0, 0, 0],
-                          [0, 0, 1, 0, 0, 0],
-                          [0, 0, 1, h, 0, 0],
-                          [0, 0, 0, 0, 1, 0],
-                          [0, 0, 0, 0, 1, h]])
-    vector = numpy.array([[y_int_n[0]],
-                          [y_int_n[1]],
-                          [y_int_n[1]],
-                          [y_int_n[2]],
-                          [y_int_n[2]],
-                          [y_int_n[3]]])
-    solved = numpy.linalg.solve(matrix, vector)
-    return evaluate_spline(x, x_int_l, solved.ravel(), 1)
+def interpolate_linear_spline(point, x_int_l, y_int_n):
+    a, b, x0, x, y = symbols('a b x0, x y')
+    spline = a + b * (x - x0)
+    ak = numpy.zeros(len(x_int_l) - 1)
+    bk = numpy.zeros(len(x_int_l) - 1)
+    k = numpy.array([])
+    i = 0
+    while i < len(ak):
+        ak[i] = solve(
+            Eq(spline, y).subs(x0, x_int_l[i]).subs(x, x_int_l[i]).subs(y, y_int_n[i]), a)[0]
+        k = numpy.append(k, ak[i])
+        bk[i] = solve(
+            Eq(spline, y).subs(a, ak[i]).subs(x0, x_int_l[i]).subs(x, x_int_l[i + 1]).subs(y, y_int_n[i + 1]), b)[0]
+        k = numpy.append(k, bk[i])
+        i += 1
+    return evaluate_spline(point, x_int_l, k, 1)
 
 
 def interpolate_parabolic_spline(x, x_int_l, y_int_n, h):
@@ -115,14 +116,24 @@ def interpolate_cubic_spline(x, x_int_l, y_int_n, h):
     return evaluate_spline(x, x_int_l, solved.ravel(), 3)
 
 
+def define_index_of_spline(x, x_int_l, order):
+    j = 1
+    while x >= x_int_l[j]:
+        if j + 1 == len(x_int_l):
+            break
+        else:
+            j += 1
+    return (j - 1) * (order + 1)
+
+
 def evaluate_spline(x, x_int_l, coefficients, order):
     value = 0
-    if x_int_l[0] <= x <= x_int_l[3]:
+    if x_int_l[0] <= x <= x_int_l[len(x_int_l) - 1]:
         i = 0
         while i <= order:
-            n = 0 if x < x_int_l[1] else order + 1 if x_int_l[1] <= x < x_int_l[2] else 2 * (order + 1)
+            n = define_index_of_spline(x, x_int_l, order)
             n += i
-            value += coefficients[n] * numpy.power(x - x_int_l[int(n / (order + 1))], n % (order + 1))
+            value += coefficients[n] * numpy.power(x - x_int_l[n // (order + 1)], n % (order + 1))
             i += 1
     return value
 
