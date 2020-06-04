@@ -87,6 +87,32 @@ def interpolate_parabolic_spline(x, x_int_l, y_int_n, h):
     return evaluate_spline(x, x_int_l, solved.ravel(), 2)
 
 
+def interpolate_parabolic_spline(point, x_int_l, y_int_n):
+    a, b, c, x0, x, y = symbols('a b c x0, x y')
+    spline = a + b * (x - x0) + c * (x - x0) ** 2
+    ak = numpy.zeros(len(x_int_l) - 1)
+    bk = numpy.zeros(len(x_int_l) - 1)
+    ck = numpy.zeros(len(x_int_l) - 1)
+    k = numpy.zeros(3)
+    k[0] = ak[0] = solve(Eq(spline, y).subs(x0, x_int_l[0]).subs(x, x_int_l[0]).subs(y, y_int_n[0]), a)[0]
+    k[2] = ck[0] = solve(Eq(diff(spline, x, 2), 0).subs(x0, x_int_l[0]).subs(x, x_int_l[0]).subs(y, y_int_n[0]), c)[0]
+    k[1] = bk[0] = solve(
+        Eq(spline, y).subs(a, ak[0]).subs(c, ck[0]).subs(x0, x_int_l[0]).subs(x, x_int_l[1]).subs(y, y_int_n[1]), b)[0]
+    i = 1
+    while i < len(ak):
+        ak[i] = solve(Eq(spline.subs(a, ak[i - 1]).subs(b, bk[i - 1]).subs(c, ck[i - 1]).subs(x0, x_int_l[i - 1]).
+                         subs(x, x_int_l[i]), spline.subs(x0, x_int_l[i]).subs(x, x_int_l[i])), a)[0]
+        k = numpy.append(k, ak[i])
+        bk[i] = solve(Eq(diff(spline, x).subs(b, bk[i - 1]).subs(c, ck[i - 1]).subs(x0, x_int_l[i - 1]).
+                         subs(x, x_int_l[i]), diff(spline, x).subs(x0, x_int_l[i]).subs(x, x_int_l[i])), b)[0]
+        k = numpy.append(k, bk[i])
+        ck[i] = solve(Eq(spline, y).subs(a, ak[i]).subs(b, bk[i]).subs(x0, x_int_l[i]).subs(x, x_int_l[i + 1]).subs(
+            y, y_int_n[i + 1]), c)[0]
+        k = numpy.append(k, ck[i])
+        i += 1
+    return evaluate_spline(point, x_int_l, k, 2)
+
+
 def interpolate_cubic_spline(x, x_int_l, y_int_n, h):
     matrix = numpy.array([[1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                           [1, h, h * h, h * h * h, 0, 0, 0, 0, 0, 0, 0, 0],
