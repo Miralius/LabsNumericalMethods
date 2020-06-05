@@ -8,11 +8,22 @@ def function(x):
     return numpy.math.pi * x / (10 + x / 2)
 
 
-# noinspection PyUnusedLocal
+# noinspection SpellCheckingInspection
+def m_n_plus_one(n, a, b, func):
+    x = symbols('x')
+    extremums = solve(diff(func, x, n + 2))
+    maximum = 0
+    maximum = max(maximum, abs(N(diff(func, x, n + 1).subs(x, a))))
+    maximum = max(maximum, abs(N(diff(func, x, n + 1).subs(x, b))))
+    for number in extremums:
+        maximum = max(maximum, abs(N(diff(func, x, n + 1).subs(x, number))))
+    return float(maximum)
+
+
 def define_step(a, b, eps):
     x = symbols('x')
     func = pi * x / (10 + x / 2)
-    return float(N(2 * ((eps / (abs(diff(func, x, 4)).subs(x, a))) ** (1 / 4))))
+    return float(N(2 * ((eps / m_n_plus_one(3, a, b, func)) ** (1 / 4))))
 
 
 def discretize(a, b, h):
@@ -113,13 +124,24 @@ def interpolate_cubic_spline(point, x_int_l, y_int_n):
     ck = numpy.append(ck, solve(Eq(diff(spline, x, 2), 0).subs(x0, x_int_l[0]).subs(x, x_int_l[0]), c)[0])
     i = 0
     while i < len(x_int_l) - 1:
-        ak = numpy.append(ak, solve(Eq(splines[i], y).subs(x0, x_int_l[i]).subs(x, x_int_l[i]).subs(y, y_int_n[i]), a_s[i])[0])
-        bk = numpy.append(bk, solve(Eq(splines[i], y).subs(c_s[i], ck[i]).subs(a_s[i], ak[i]).subs(x0, x_int_l[i]).subs(x, x_int_l[i + 1]).subs(y, y_int_n[i + 1]), b_s[i])[0])
+        ak = numpy.append(ak,
+                          solve(Eq(splines[i], y).subs(x0, x_int_l[i]).subs(x, x_int_l[i]).subs(y, y_int_n[i]), a_s[i])[
+                              0])
+        bk = numpy.append(bk, solve(
+            Eq(splines[i], y).subs(c_s[i], ck[i]).subs(a_s[i], ak[i]).subs(x0, x_int_l[i]).subs(x, x_int_l[i + 1]).subs(
+                y, y_int_n[i + 1]), b_s[i])[0])
         if i != len(x_int_l) - 2:
-            ck = numpy.append(ck, solve(Eq(diff(splines[i], x, 2).subs(c_s[i], ck[i]).subs(x0, x_int_l[i]).subs(x, x_int_l[i + 1]), diff(splines[i + 1], x, 2).subs(x0, x_int_l[i + 1]).subs(x, x_int_l[i + 1])), c_s[i + 1])[0])
-            dk = numpy.append(dk, solve(Eq(diff(splines[i], x).subs(b_s[i], bk[i]).subs(c_s[i], ck[i]).subs(x0, x_int_l[i]).subs(x, x_int_l[i + 1]), diff(splines[i + 1], x).subs(x0, x_int_l[i + 1]).subs(x, x_int_l[i + 1])), d_s[i])[0])
+            ck = numpy.append(ck, solve(
+                Eq(diff(splines[i], x, 2).subs(c_s[i], ck[i]).subs(x0, x_int_l[i]).subs(x, x_int_l[i + 1]),
+                   diff(splines[i + 1], x, 2).subs(x0, x_int_l[i + 1]).subs(x, x_int_l[i + 1])), c_s[i + 1])[0])
+            dk = numpy.append(dk, solve(Eq(
+                diff(splines[i], x).subs(b_s[i], bk[i]).subs(c_s[i], ck[i]).subs(x0, x_int_l[i]).subs(x,
+                                                                                                      x_int_l[i + 1]),
+                diff(splines[i + 1], x).subs(x0, x_int_l[i + 1]).subs(x, x_int_l[i + 1])), d_s[i])[0])
         i += 1
-    dk = numpy.append(dk, solve(Eq(diff(splines[len(x_int_l) - 2], x, 2).subs(c_s[len(x_int_l) - 2], ck[len(x_int_l) - 2]).subs(x0, x_int_l[len(x_int_l) - 2]).subs(x, x_int_l[len(x_int_l) - 1]), 0), d_s[len(x_int_l) - 2])[0])
+    dk = numpy.append(dk, solve(Eq(
+        diff(splines[len(x_int_l) - 2], x, 2).subs(c_s[len(x_int_l) - 2], ck[len(x_int_l) - 2]).subs(x0, x_int_l[
+            len(x_int_l) - 2]).subs(x, x_int_l[len(x_int_l) - 1]), 0), d_s[len(x_int_l) - 2])[0])
     i = 0
     while i < len(x_int_l) - 2:
         dk[i] = solve(Eq(dk[i].subs(b_s[i + 1], bk[i + 1]), d_s[i]), d_s[i])[0]
